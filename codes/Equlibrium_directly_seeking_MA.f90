@@ -920,13 +920,14 @@ module DEPLETION
         if(mmm.gt.1)then
 !        call check_N(mmm)!---判断子循环是否收敛       
             open(1,file='criteria_NNN.dat')
-            
+            ntmp=1
             do j=1,7
                 read(1,*,iostat=nn)FERROR(j)
+                if(FERROR(j).ne.FERROR_OLD(j))ntmp=0
             enddo
             close(1)
             
-            if(FERROR.eq.FERROR_OLD)exit
+            if(ntmp.eq.1)exit
             
             FERROR_OLD=FERROR
             
