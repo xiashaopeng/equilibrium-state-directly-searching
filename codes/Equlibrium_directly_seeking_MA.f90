@@ -873,16 +873,15 @@ module DEPLETION
             call change(ii)
 
             if(ii.gt.1)then
-                if(ii.gt.1)then
             open(1,file='criteria.dat')
             read(1,*)
             read(1,*)(FN_NUCL(i),i=1,2)
             read(1,*)
             njudge=0
             do while(.true.)
-                read(1,*,iostat=nn)nza,ferror
+                read(1,*,iostat=nn)nza,ferror1
                 if(nn/=0)exit
-                if(ferror.gt.0.0)then
+                if(ferror1.gt.0.0)then
                     njudge=1
                     exit
                 endif
@@ -910,7 +909,7 @@ module DEPLETION
             endif
             
             ii=ii+1
-        enddo
+        end do
                 
         call KEY(FEED)
         
@@ -1494,7 +1493,7 @@ module DEPLETION
             close(1)
             close(2)
         endif
-        call check_converge(nr)
+        call check_converge(nr,ncycle)
     endif
     
     
@@ -1985,15 +1984,20 @@ module DEPLETION
 100	format(a)	
     end subroutine new_TRITON
 
-  
-    subroutine save_N(mmm)
+    
+    subroutine save_N(mm,mmm)
     character(200)rd
+    km1=mod(mm,10000)/1000+48	!将数字转换成字符,做文件名用
+	km2=mod(mm,1000)/100+48	!将数字转换成字符,做文件名用
+	km3=mod(mm,100)/10+48	!将数字转换成字符,做文件名用
+	km4=mod(mm,10)+48		!将数字转换成字符,做文件名用
+    
     kn1=mod(mmm,10000)/1000+48	!将数字转换成字符,做文件名用
 	kn2=mod(mmm,1000)/100+48	!将数字转换成字符,做文件名用
 	kn3=mod(mmm,100)/10+48	!将数字转换成字符,做文件名用
 	kn4=mod(mmm,10)+48		!将数字转换成字符,做文件名用
     open(1,file='com_1_x.dat')
-    open(2,file='com_'//char(kn1)//char(kn2)//char(kn3)//char(kn4)//'.dat')
+    open(2,file='com'//char(km1)//char(km2)//char(km3)//char(km4)//'_'//char(kn1)//char(kn2)//char(kn3)//char(kn4)//'.dat')
     do while(.true.)
         read(1,100,iostat=nn)rd
         if(nn/=0)exit
