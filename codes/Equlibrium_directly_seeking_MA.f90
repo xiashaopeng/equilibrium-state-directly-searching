@@ -2198,7 +2198,7 @@ subroutine KEY(FEED)
     !------------提取中子通量密度---------------
     open(1,file='neutron_flux.dat')
     read(1,*)
-    read(1,*) flux
+    read(1,'(E9.3)') flux
     close(1)
     !-----------------------------------------------------
     !--------------建立中子得失守恒方程--------------------
@@ -3711,6 +3711,7 @@ subroutine KEY(FEED)
     enddo
     close(1)    
 100 format(a)
+
 end subroutine KEY
 
 !---------------TRU总mol浓度不变------------------
@@ -4008,7 +4009,7 @@ end subroutine KEY
 	 
 
         call new_TRITON
-        call system('E:\scale6.1\cmds\runscale TRITON.inp')
+        !call system('E:\scale6.1\cmds\runscale TRITON.inp')
         call read_kmt
         call read_keffd(0)
         call cs_file(0)
@@ -4147,6 +4148,15 @@ end subroutine KEY
         close(5) 
         close(2)
  
+    open(1,file='neutron_flux.dat')
+    read(1,*)
+    read(1,*) flux
+    close(1)
+    
+    open(1,file='neutron_flux.dat')
+    write(1,*)"neutron flux:"
+    write(1,'(E9.3)') flux
+    close(1)
     
     open(2,file='TRITON.out')
     open(3,file='tot_cs.dat')!!!!!用于中子得失守恒方程的截面信息：tot-cap、nu-sigf
