@@ -1865,7 +1865,7 @@ module DEPLETION
 	!close(1)
 
 	open(2,file='56$$13.inp')
-	write(2,"(a,i6,a)")" 56$$ a13  ",388," e"
+	write(2,"(a,i6,a)")" 56$$ a13  ",429," e"
 	close(2)
 
 !c	stop
@@ -2108,7 +2108,7 @@ subroutine KEY(FEED)
     character(9) rd1
     character(200)rdd
     dimension FEED(20) !----存储各个核素的添料率信息
-    dimension N(388),FN(388)  !!!数组N为核素的编号，FN为各核素相对物质的量。
+    dimension N(429),FN(429)  !!!数组N为核素的编号，FN为各核素相对物质的量。
     
     fnonleak=1.0
     fkeff=1.0725
@@ -2196,7 +2196,7 @@ subroutine KEY(FEED)
         
         i=1
         do while(.true.)
-            if(i.gt.388)exit
+            if(i.gt.429)exit
             if(N(i).eq.nza)then
                 if(nza.eq.922330) then
                     if(rd1.eq."tot-cap") then
@@ -2280,7 +2280,7 @@ subroutine KEY(FEED)
         if(nn/=0)exit
         i=1
         do while(.true.)
-            if(i.gt.388)exit
+            if(i.gt.429)exit
             if(N(i).eq.nza)then
                 if(nza.eq.922330) then
                     if(mt.eq.16) fu3=fu3+fnonleak/fkeff*fcs*2
@@ -2360,7 +2360,7 @@ subroutine KEY(FEED)
         if(nn/=0)exit
         i=1
         do while(.true.)
-            if(i.gt.388)exit
+            if(i.gt.429)exit
             if(N(i).eq.nza)then
                 fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
                 exit
@@ -2377,7 +2377,7 @@ subroutine KEY(FEED)
         if((nza.eq.902310).and.(mt.eq.102))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2389,7 +2389,7 @@ subroutine KEY(FEED)
         if((nza.eq.902340).and.(mt.eq.17))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2400,7 +2400,7 @@ subroutine KEY(FEED)
         if((nza.eq.912320).and.(mt.eq.103))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2411,7 +2411,7 @@ subroutine KEY(FEED)
         if((nza.eq.912330).and.(mt.eq.28))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2422,7 +2422,7 @@ subroutine KEY(FEED)
         if((nza.eq.922350).and.(mt.eq.107))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2433,7 +2433,7 @@ subroutine KEY(FEED)
         if((nza.eq.902330).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2489,7 +2489,7 @@ subroutine KEY(FEED)
         if(nn/=0)exit
         i=1
         do while(.true.)
-            if(i.gt.388)exit
+            if(i.gt.429)exit
             if(N(i).eq.nza)then
                 fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
                 exit
@@ -2506,7 +2506,7 @@ subroutine KEY(FEED)
         if((nza.eq.922320).and.(mt.eq.102))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2518,7 +2518,7 @@ subroutine KEY(FEED)
         if((nza.eq.922340).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2529,7 +2529,7 @@ subroutine KEY(FEED)
         if((nza.eq.922350).and.(mt.eq.17))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2540,7 +2540,7 @@ subroutine KEY(FEED)
         if((nza.eq.922360).and.(mt.eq.37))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2551,7 +2551,7 @@ subroutine KEY(FEED)
         if((nza.eq.942360).and.(mt.eq.107))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -2630,7 +2630,7 @@ subroutine KEY(FEED)
         if((nza.eq.952430).and.(mt.eq.161))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp1=fp1+FN(i)*flux*fpcs
                     exit
@@ -2641,7 +2641,7 @@ subroutine KEY(FEED)
         if((nza.eq.952420).and.(mt.eq.511))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp1=fp1+FN(i)*flux*fpcs
                     exit
@@ -2652,7 +2652,7 @@ subroutine KEY(FEED)
         if((nza.eq.962420).and.(mt.eq.1031))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp1=fp1+FN(i)*flux*fpcs
                     exit
@@ -2663,7 +2663,7 @@ subroutine KEY(FEED)
         if((nza.eq.972450).and.(mt.eq.1071))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp1=fp1+FN(i)*flux*fpcs
                     exit
@@ -2719,7 +2719,7 @@ subroutine KEY(FEED)
         if((nza.eq.952430).and.(mt.eq.160))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp2=fp2+FN(i)*flux*fpcs
                     exit
@@ -2730,7 +2730,7 @@ subroutine KEY(FEED)
         if((nza.eq.952440).and.(mt.eq.170))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp2=fp2+FN(i)*flux*fpcs
                     exit
@@ -2741,7 +2741,7 @@ subroutine KEY(FEED)
         if((nza.eq.952441).and.(mt.eq.170))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp2=fp2+FN(i)*flux*fpcs
                     exit
@@ -2752,7 +2752,7 @@ subroutine KEY(FEED)
         if((nza.eq.962420).and.(mt.eq.1030))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp2=fp2+FN(i)*flux*fpcs
                     exit
@@ -2763,7 +2763,7 @@ subroutine KEY(FEED)
         if((nza.eq.972450).and.(mt.eq.1070))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp2=fp2+FN(i)*flux*fpcs
                     exit
@@ -2819,7 +2819,7 @@ subroutine KEY(FEED)
         if((nza.eq.962410).and.(mt.eq.102))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp3=fp3+FN(i)*flux*fpcs
                     exit
@@ -2830,7 +2830,7 @@ subroutine KEY(FEED)
         if((nza.eq.962430).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp3=fp3+FN(i)*flux*fpcs
                     exit
@@ -2841,7 +2841,7 @@ subroutine KEY(FEED)
         if((nza.eq.962440).and.(mt.eq.17))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp3=fp3+FN(i)*flux*fpcs
                     exit
@@ -2890,7 +2890,7 @@ subroutine KEY(FEED)
     close(1)
     i=1
     do while(.true.)
-        if(i.gt.388)exit
+        if(i.gt.429)exit
         if(N(i).eq.nza)then
             fp4=fp4+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
             exit
@@ -2910,7 +2910,7 @@ subroutine KEY(FEED)
         if((nza.eq.932390).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp4=fp4+FN(i)*flux*fpcs
                     exit
@@ -2921,7 +2921,7 @@ subroutine KEY(FEED)
         if((nza.eq.942380).and.(mt.eq.103))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp4=fp4+FN(i)*flux*fpcs
                     exit
@@ -2932,7 +2932,7 @@ subroutine KEY(FEED)
         if((nza.eq.952410).and.(mt.eq.107))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp4=fp4+FN(i)*flux*fpcs
                     exit
@@ -2986,7 +2986,7 @@ subroutine KEY(FEED)
         if((nza.eq.942370).and.(mt.eq.102))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fpr=fpr+FN(i)*flux*fpcs
                     exit
@@ -2997,7 +2997,7 @@ subroutine KEY(FEED)
         if((nza.eq.942390).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fpr=fpr+FN(i)*flux*fpcs
                     exit
@@ -3008,7 +3008,7 @@ subroutine KEY(FEED)
         if((nza.eq.942400).and.(mt.eq.17))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fpr=fpr+FN(i)*flux*fpcs
                     exit
@@ -3019,7 +3019,7 @@ subroutine KEY(FEED)
         if((nza.eq.942410).and.(mt.eq.37))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fpr=fpr+FN(i)*flux*fpcs
                     exit
@@ -3030,7 +3030,7 @@ subroutine KEY(FEED)
         if((nza.eq.962410).and.(mt.eq.107))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fpr=fpr+FN(i)*flux*fpcs
                     exit
@@ -3074,7 +3074,7 @@ subroutine KEY(FEED)
         if(nn/=0)exit
         i=1
         do while(.true.)
-            if(i.gt.388)exit
+            if(i.gt.429)exit
             if(N(i).eq.nza)then
                 fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
                 exit
@@ -3091,7 +3091,7 @@ subroutine KEY(FEED)
         if((nza.eq.932360).and.(mt.eq.102))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3103,7 +3103,7 @@ subroutine KEY(FEED)
         if((nza.eq.932380).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3114,7 +3114,7 @@ subroutine KEY(FEED)
         if((nza.eq.932390).and.(mt.eq.17))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3125,7 +3125,7 @@ subroutine KEY(FEED)
         if((nza.eq.942370).and.(mt.eq.103))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3136,7 +3136,7 @@ subroutine KEY(FEED)
         if((nza.eq.952400).and.(mt.eq.107))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3192,7 +3192,7 @@ subroutine KEY(FEED)
         if(nn/=0)exit
         i=1
         do while(.true.)
-            if(i.gt.388)exit
+            if(i.gt.429)exit
             if(N(i).eq.nza)then
                 fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
                 exit
@@ -3209,7 +3209,7 @@ subroutine KEY(FEED)
         if((nza.eq.962410).and.(mt.eq.103))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3220,7 +3220,7 @@ subroutine KEY(FEED)
         if((nza.eq.952400).and.(mt.eq.102))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3232,7 +3232,7 @@ subroutine KEY(FEED)
         if((nza.eq.952420).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3243,7 +3243,7 @@ subroutine KEY(FEED)
         if((nza.eq.952430).and.(mt.eq.17))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3254,7 +3254,7 @@ subroutine KEY(FEED)
         if((nza.eq.952421).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3265,7 +3265,7 @@ subroutine KEY(FEED)
         if((nza.eq.952440).and.(mt.eq.37))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3320,7 +3320,7 @@ subroutine KEY(FEED)
         if(nn/=0)exit
         i=1
         do while(.true.)
-            if(i.gt.388)exit
+            if(i.gt.429)exit
             if(N(i).eq.nza)then
                 fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
                 exit
@@ -3337,7 +3337,7 @@ subroutine KEY(FEED)
         if((nza.eq.962430).and.(mt.eq.103))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3348,7 +3348,7 @@ subroutine KEY(FEED)
         if((nza.eq.952420).and.(mt.eq.102))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3360,7 +3360,7 @@ subroutine KEY(FEED)
         if((nza.eq.952421).and.(mt.eq.102))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3371,7 +3371,7 @@ subroutine KEY(FEED)
         if((nza.eq.972460).and.(mt.eq.107))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3382,7 +3382,7 @@ subroutine KEY(FEED)
         if((nza.eq.952440).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3438,7 +3438,7 @@ subroutine KEY(FEED)
         if(nn/=0)exit
         i=1
         do while(.true.)
-            if(i.gt.388)exit
+            if(i.gt.429)exit
             if(N(i).eq.nza)then
                 fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
                 exit
@@ -3455,7 +3455,7 @@ subroutine KEY(FEED)
         if((nza.eq.962430).and.(mt.eq.102))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3466,7 +3466,7 @@ subroutine KEY(FEED)
         if((nza.eq.962450).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3478,7 +3478,7 @@ subroutine KEY(FEED)
         if((nza.eq.962460).and.(mt.eq.17))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3489,7 +3489,7 @@ subroutine KEY(FEED)
         if((nza.eq.962470).and.(mt.eq.37))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3545,7 +3545,7 @@ subroutine KEY(FEED)
         if(nn/=0)exit
         i=1
         do while(.true.)
-            if(i.gt.388)exit
+            if(i.gt.429)exit
             if(N(i).eq.nza)then
                 fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
                 exit
@@ -3562,7 +3562,7 @@ subroutine KEY(FEED)
         if((nza.eq.962440).and.(mt.eq.102))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3573,7 +3573,7 @@ subroutine KEY(FEED)
         if((nza.eq.962460).and.(mt.eq.16))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3585,7 +3585,7 @@ subroutine KEY(FEED)
         if((nza.eq.962470).and.(mt.eq.17))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3596,7 +3596,7 @@ subroutine KEY(FEED)
         if((nza.eq.962480).and.(mt.eq.37))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3607,7 +3607,7 @@ subroutine KEY(FEED)
         if((nza.eq.972450).and.(mt.eq.103))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3618,7 +3618,7 @@ subroutine KEY(FEED)
         if((nza.eq.982480).and.(mt.eq.107))then
            i=1
             do while(.true.)
-                if(i.gt.388)exit
+                if(i.gt.429)exit
                 if(N(i).eq.nza)then
                     fp=fp+FN(i)*flux*fpcs
                     exit
@@ -3998,7 +3998,7 @@ end subroutine KEY
 	 
 
         call new_TRITON
-        call system('E:\scale6.1\cmds\runscale TRITON.inp')
+        !call system('E:\scale6.1\cmds\runscale TRITON.inp')
         call cs_file(0)
 
         mmn=6
