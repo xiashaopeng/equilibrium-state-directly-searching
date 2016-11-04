@@ -791,10 +791,19 @@ module DEPLETION
         close(1)
         
         open(1,file='powe_1.inp')
-        write(1,*)" 59** ",flux,flux,flux,flux,flux
-        write(1,*)flux,flux,flux,flux,flux
+        write(1,*)" 59**   f",flux
         close(1)
         
+        open(2,file='56$$a3.inp')
+        write(2,1000)" 56$$ a3 ",1," e"
+        close(2)
+        
+        if(mm.gt.2)then
+            open(1,file='con_fe_old.inp')
+            read(1,*)(FEED(j),j=1,4)
+            read(1,*)(FEED(j),j=5,7)
+            close(1)
+        endif  
         !if(mm.gt.1)then
         !     open(1,file='con_fe_old.inp')
         !    read(1,*)(FEED(j),j=1,4)
@@ -809,7 +818,7 @@ module DEPLETION
         mmm=1
         do while(.true.)
             !if((mm.eq.1).and.(mmm.eq.1))then
-            if(mmm.eq.1)then
+            if((mm.le.2).and.(mmm.eq.1))then
                     feed_Th=0.1E-05!----0.2E-05
                     feed_U3=0.1E-05
                     feed_MA=0.1E-06
@@ -853,50 +862,65 @@ module DEPLETION
                   
         ii=1
         NNN=1!---------判断是否达到收敛要求的一个指标之一，NNN=9是收敛的必要条件
-       do while(.true.)
-            
-            call pow_60(ii,time)           
+        nnnn=1
+        
+        call pow_60(ii,1000.0)
+        do while(.true.)
+            write(*,*)"临界搜索周期：",mm
+            write(*,*)"添料率搜索周期：",mmm
+            write(*,*)"燃耗循环周期：",ii
+           ! call pow_60(ii,time)           
             call new_origens(ii)
             call system('E:\scale6.1\cmds\runscale origens.inp')
             call out_M_stat1(ii,ncheck,NNN)
-            if(ncheck.eq.0)exit
+            if(ncheck.eq.0)then
+                call save_N(mm,mmm)
+                exit
+            endif
             call change(ii)
 
             if(ii.gt.1)then
-                open(1,file='criteria.dat')
-                read(1,*)
-                read(1,*)(FN_NUCL(i),i=1,2)
-                read(1,*)
-                read(1,*)
-                read(1,*)(FN_NUCL(i),i=3,6)
-                read(1,*)
-                read(1,*)(FN_NUCL(i),i=7,10)
-                read(1,*)
-                read(1,*)(FN_NUCL(i),i=11,13)
-                close(1)
-                njudge=0
-                do III=3,12
-                    if(FN_NUCL(III).gt.0.0)then 
-                        njudge=1
-                        exit
-                    endif
-                enddo
-            
-                if(njudge.eq.0)then
-                    if(NNN.eq.9)then
-                        call save_N(mmm)
-                        exit
-                    else
-                        NNN=NNN+1
-                    endif
+            open(1,file='criteria.dat')
+            read(1,*)
+            read(1,*)(FN_NUCL(i),i=1,2)
+            read(1,*)
+            njudge=0
+            do while(.true.)
+                read(1,*,iostat=nn)nza,ferror1
+                if(nn/=0)exit
+                if((nza.eq.902320).or.(nza.eq.922330).or.(nza.eq.922320).or.(nza.eq.922340).or.(nza.eq.922350).or.(nza.eq.922360).or.(nza.eq.932370).or.(nza.eq.942380).or.(nza.eq.952410).or.(nza.eq.952430).or.(nza.eq.962440).or.(nza.eq.962450).or.(nza.eq.962460).or.(nza.eq.942390).or.(nza.eq.942400))then
+                if(ferror1.gt.0.0)then
+                    njudge=1
+                    exit
                 endif
-            
+                endif
+            enddo
+                  
+            if(njudge.eq.0)then
+                if(NNN.eq.9)then
+                    if(nnnn.eq.1)then
+                        call pow_60(ii,100.0)
+                        nnnn=nnnn+1
+                        NNN=1
+                    elseif(nnnn.eq.2)then
+                        call pow_60(ii,10.0)
+                        nnnn=nnnn+1
+                        NNN=1
+                    else
+                        call save_N(mm,mmm)
+                        exit
+                    endif                   
+                else
+                    NNN=NNN+1
+                endif
+            endif
             endif
             
             ii=ii+1
         enddo
                 
         call KEY(FEED)
+            
         
         if(mmm.gt.1)then
 !        call check_N(mmm)!---判断子循环是否收敛       
@@ -986,6 +1010,7 @@ module DEPLETION
     do while(.true.)
         read(3,*,iostat=nn)nuclx,nza,fna,fatoms
         if(nn/=0)exit
+        if(nza.eq.892240)exit
         if(fatoms.ge.1e-20)then
             if(nza.eq.60120)then
                 write(5,101)"c      ",' 1 0 ',fatoms,ntemp," end   "
@@ -1479,7 +1504,7 @@ module DEPLETION
             close(1)
             close(2)
         endif
-        call check_converge(nr)
+        call check_converge(nr,ncycle)
     endif
     
     
@@ -1503,8 +1528,9 @@ module DEPLETION
 100 format(a)
     end subroutine change
     
-    subroutine check_converge(ncheck)
+    subroutine check_converge(ncheck,ncycle)
     character(7) nucly1,nucly2
+    dimension FNX(106),FNO(106),N(106)
     
     open(1,file='com_x.dat')
     read(1,*)
@@ -1512,6 +1538,7 @@ module DEPLETION
     fallnucl1=0.0
     sumhm1=0.0    
     fcs71=0.0
+    i=1
     do while(.true.)
         read(1,*,iostat=nn)nucly1,nza1,fna1,fatoms1,fq1,fw1
         if(nn/=0)exit
@@ -1519,38 +1546,42 @@ module DEPLETION
         if(ANINT(fna1).ge.220)then
             sumhm1=sumhm1+fatoms1
         endif
-        if(nza1.eq.902320)then
-            fth21=fatoms1
-        endif
-        if(nza1.eq.922330)then
-            fu31=fatoms1
-        endif
-        if(nza1.eq.932370)then
-            fnp1=fatoms1
-        endif
-        if(nza1.eq.942380)then
-            fpu81=fatoms1
-        endif
-        if(nza1.eq.942390)then
-            fpu91=fatoms1
-        endif
-        if(nza1.eq.952410)then
-            fam11=fatoms1
-        endif
-        if(nza1.eq.952430)then
-            fam31=fatoms1
-        endif
-        if(nza1.eq.962440)then
-            fcm41=fatoms1
-        endif
-        if(nza1.eq.962450)then
-            fcm51=fatoms1
-        endif
-        if(nza1.eq.962460)then
-            fcm61=fatoms1
-        endif
-        if(nza1.eq.551370)then
-            fcs71=fcs71+fatoms1
+        if(nza1.ge.890000)then
+            FNX(i)=fatoms1
+            N(i)=nza1
+            i=i+1
+        !if(nza1.eq.902320)then
+        !    fth21=fatoms1
+        !endif
+        !if(nza1.eq.922330)then
+        !    fu31=fatoms1
+        !endif
+        !if(nza1.eq.932370)then
+        !    fnp1=fatoms1
+        !endif
+        !if(nza1.eq.942380)then
+        !    fpu81=fatoms1
+        !endif
+        !if(nza1.eq.942390)then
+        !    fpu91=fatoms1
+        !endif
+        !if(nza1.eq.952410)then
+        !    fam11=fatoms1
+        !endif
+        !if(nza1.eq.952430)then
+        !    fam31=fatoms1
+        !endif
+        !if(nza1.eq.962440)then
+        !    fcm41=fatoms1
+        !endif
+        !if(nza1.eq.962450)then
+        !    fcm51=fatoms1
+        !endif
+        !if(nza1.eq.962460)then
+        !    fcm61=fatoms1
+        !endif
+        !if(nza1.eq.551370)then
+        !    fcs71=fcs71+fatoms1
         endif
     enddo
     close(1)
@@ -1561,6 +1592,7 @@ module DEPLETION
     fallnucl2=0.0
     sumhm2=0.0
     fcs72=0.0
+    i=1
     do while(.true.)
         read(2,*,iostat=mm)nucly2,nza2,fna2,fatoms2,fq2,fw2
         if(mm/=0)exit
@@ -1568,82 +1600,85 @@ module DEPLETION
         if(ANINT(fna2).ge.220)then
             sumhm2=sumhm2+fatoms2
         endif
-        if(nza2.eq.902320)then
-            fth22=fatoms2
-        endif
-        if(nza2.eq.922330)then
-            fu32=fatoms2
-        endif
-        if(nza2.eq.932370)then
-            fnp2=fatoms2
-        endif
-        if(nza2.eq.942380)then
-            fpu82=fatoms2
-        endif
-        if(nza2.eq.942390)then
-            fpu92=fatoms2
-        endif
-        if(nza2.eq.952410)then
-            fam12=fatoms2
-        endif
-        if(nza2.eq.952430)then
-            fam32=fatoms2
-        endif
-        if(nza2.eq.962440)then
-            fcm42=fatoms2
-        endif
-        if(nza2.eq.962450)then
-            fcm52=fatoms2
-        endif
-        if(nza2.eq.962460)then
-            fcm62=fatoms2
-        endif
-        if(nza2.eq.551370)then
-            fcs72=fcs72+fatoms2
+        if(nza2.ge.890000)then
+            FNO(i)=fatoms2
+            i=i+1
+        !if(nza2.eq.902320)then
+        !    fth22=fatoms2
+        !endif
+        !if(nza2.eq.922330)then
+        !    fu32=fatoms2
+        !endif
+        !if(nza2.eq.932370)then
+        !    fnp2=fatoms2
+        !endif
+        !if(nza2.eq.942380)then
+        !    fpu82=fatoms2
+        !endif
+        !if(nza2.eq.942390)then
+        !    fpu92=fatoms2
+        !endif
+        !if(nza2.eq.952410)then
+        !    fam12=fatoms2
+        !endif
+        !if(nza2.eq.952430)then
+        !    fam32=fatoms2
+        !endif
+        !if(nza2.eq.962440)then
+        !    fcm42=fatoms2
+        !endif
+        !if(nza2.eq.962450)then
+        !    fcm52=fatoms2
+        !endif
+        !if(nza2.eq.962460)then
+        !    fcm62=fatoms2
+        !endif
+        !if(nza2.eq.551370)then
+        !    fcs72=fcs72+fatoms2
         endif
     enddo
     close(2)
     
-    if(ncheck.eq.0)then
+    !if(ncheck.eq.0)then
         ferror_all=abs(fallnucl1-fallnucl2)/fallnucl2
         ferror_hm=abs(sumhm1-sumhm2)/sumhm2
-        fth2=abs(fth21-fth22)/fth22
-        fu3=abs(fu31-fu32)/fu32
-        fnp=abs(fnp1-fnp2)/fnp2
-        fpu8=abs(fpu81-fpu82)/fpu82
-        fpu9=abs(fpu91-fpu92)/fpu92
-        fam1=abs(fam11-fam12)/fam12
-        fam3=abs(fam31-fam32)/fam32
-        fcm4=abs(fcm41-fcm42)/fcm42
-        fcm5=abs(fcm51-fcm52)/fcm52
-        fcm6=abs(fcm61-fcm62)/fcm62
-        fcs7=abs(fcs71-fcs72)/fcs72
-    endif
-    if(ncheck.eq.1)then
-        ferror_all=abs(fallnucl1-fallnucl2)/fallnucl1
-        ferror_hm=abs(sumhm1-sumhm2)/sumhm1
-        fth2=abs(fth21-fth22)/fth21
-        fu3=abs(fu31-fu32)/fu31
-        fnp=abs(fnp1-fnp2)/fnp1
-        fpu8=abs(fpu81-fpu82)/fpu81
-        fpu9=abs(fpu91-fpu92)/fpu91
-        fam1=abs(fam11-fam12)/fam11
-        fam3=abs(fam31-fam32)/fam31
-        fcm4=abs(fcm41-fcm42)/fcm41
-        fcm5=abs(fcm51-fcm52)/fcm51
-        fcm6=abs(fcm61-fcm62)/fcm61
-        fcs7=abs(fcs71-fcs72)/fcs71
-    endif
+    !    fth2=abs(fth21-fth22)/fth22
+    !    fu3=abs(fu31-fu32)/fu32
+    !    fnp=abs(fnp1-fnp2)/fnp2
+    !    fpu8=abs(fpu81-fpu82)/fpu82
+    !    fpu9=abs(fpu91-fpu92)/fpu92
+    !    fam1=abs(fam11-fam12)/fam12
+    !    fam3=abs(fam31-fam32)/fam32
+    !    fcm4=abs(fcm41-fcm42)/fcm42
+    !    fcm5=abs(fcm51-fcm52)/fcm52
+    !    fcm6=abs(fcm61-fcm62)/fcm62
+    !    fcs7=abs(fcs71-fcs72)/fcs72
+    !endif
+    !if(ncheck.eq.1)then
+    !    ferror_all=abs(fallnucl1-fallnucl2)/fallnucl1
+    !    ferror_hm=abs(sumhm1-sumhm2)/sumhm1
+    !    fth2=abs(fth21-fth22)/fth21
+    !    fu3=abs(fu31-fu32)/fu31
+    !    fnp=abs(fnp1-fnp2)/fnp1
+    !    fpu8=abs(fpu81-fpu82)/fpu81
+    !    fpu9=abs(fpu91-fpu92)/fpu91
+    !    fam1=abs(fam11-fam12)/fam11
+    !    fam3=abs(fam31-fam32)/fam31
+    !    fcm4=abs(fcm41-fcm42)/fcm41
+    !    fcm5=abs(fcm51-fcm52)/fcm51
+    !    fcm6=abs(fcm61-fcm62)/fcm61
+    !    fcs7=abs(fcs71-fcs72)/fcs71
+    !endif
     open(1,file='criteria.dat')
     write(1,*)"总的核素浓度残差  重金属浓度残差"
     write(1,*)ferror_all,ferror_hm
     write(1,*)"各重要核素残差"
-    write(1,*)"th u3 np pu8"
-    write(1,*)fth2,fu3,fnp,fpu8
-    write(1,*)"pu9 am1 am3 cm4"
-    write(1,*)fpu9,fam1,fam3,fcm4
-    write(1,*)"cm5 cm6 cs137"
-    write(1,*)fcm5,fcm6,fcs7
+    i=1
+    do while(.true.)
+        if(i.gt.106)exit
+        write(1,*)N(i),abs(FNX(i)-FNO(i))/FNO(i)
+        i=i+1
+    end do
     close(1)
     end subroutine check_converge
     
@@ -1678,7 +1713,7 @@ module DEPLETION
 	!time=30.0
 	!endif 
 
-    time=3650.0
+    !time=3650.0
     
 	nt=int(time)
 	if(ncy.eq.1)then
@@ -1945,7 +1980,7 @@ module DEPLETION
     end subroutine new_TRITON
 
   
-    subroutine save_N(mmm)
+    subroutine save_N(mm,mmm)
     character(200)rd
     kn1=mod(mmm,10000)/1000+48	!将数字转换成字符,做文件名用
 	kn2=mod(mmm,1000)/100+48	!将数字转换成字符,做文件名用
@@ -2144,6 +2179,7 @@ subroutine KEY(FEED)
     !---------------
     fac_el=0.0
     open(1,file='KMT_act.dat')
+    read(1,*)
     read(1,*)facth
     do while(.true.)
         read(1,*,iostat=nn)fac
@@ -3998,22 +4034,26 @@ end subroutine KEY
 	 
 
         call new_TRITON
-        !call system('E:\scale6.1\cmds\runscale TRITON.inp')
+        call system('E:\scale6.1\cmds\runscale TRITON.inp')
+        call read_kmt
+        call read_keffd(0)
         call cs_file(0)
 
-        mmn=6
+        mmn=1
         NFINAL=0
         do while(.true.)             
 
             
             call Seek_Equilibrum(mmn)
             
-            call new_CSAS
-            call system('E:\scale6.1\cmds\runscale CSAS.inp')
-            call read_kmt
+            !call new_CSAS
+            !call system('E:\scale6.1\cmds\runscale CSAS.inp')
+            !call read_kmt
+            
             
             call new_TRITON
             call system('E:\scale6.1\cmds\runscale TRITON.inp')
+            call read_kmt
             call read_keffd(mmn)
             call cs_file(mmn)
                         
@@ -4028,7 +4068,7 @@ end subroutine KEY
                     NFINAL=0
                 endif
                 
-                if(NFINAL.gt.3)exit
+                !if(NFINAL.gt.3)exit
             endif
             
             mmn=mmn+1
@@ -4047,7 +4087,7 @@ end subroutine KEY
 	kn4=mod(ncheck,10)+48		!将数字转换成字符,做文件名用
     
 !	ncheck=0
-	open(1,file='CSAS.out')
+	open(1,file='TRITON.out')
 	open(2,file='keff0.dat')
 
 	do while(.true.)
