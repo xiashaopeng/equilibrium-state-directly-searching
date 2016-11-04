@@ -862,6 +862,11 @@ module DEPLETION
        
         do while(.true.)
         
+            write(*,*)"临界搜索循环迭代周期：",mm
+            write(*,*)"添料率搜索循环迭代周期：",mmm
+            write(*,*)"平衡态燃耗计算周期：",ii
+
+            
             call new_origens(ii)
             call system('E:\scale6.1\cmds\runscale origens.inp')
             call out_M_stat1(ii,ncheck,NNN)
@@ -881,26 +886,28 @@ module DEPLETION
             do while(.true.)
                 read(1,*,iostat=nn)nza,ferror1
                 if(nn/=0)exit
+                if((nza.eq.902320).or.(nza.eq.922330).or.(nza.eq.922320).or.(nza.eq.922340).or.(nza.eq.922350).or.(nza.eq.922360).or.(nza.eq.932370).or.(nza.eq.942380).or.(nza.eq.952410).or.(nza.eq.952430).or.(nza.eq.962440).or.(nza.eq.962450).or.(nza.eq.962460).or.(nza.eq.942390).or.(nza.eq.942400))then
                 if(ferror1.gt.0.0)then
                     njudge=1
                     exit
+                endif
                 endif
             enddo
                   
             if(njudge.eq.0)then
                 if(NNN.eq.9)then
-                    if(nnnn.eq.1)then
-                        call pow_60(ii,100.0)
-                        nnnn=nnnn+1
-                        NNN=1
-                    elseif(nnnn.eq.2)then
-                        call pow_60(ii,10.0)
-                        nnnn=nnnn+1
-                        NNN=1
-                    else
+                    !if(nnnn.eq.1)then
+                    !    call pow_60(ii,100.0)
+                    !    nnnn=nnnn+1
+                    !    NNN=1
+                    !elseif(nnnn.eq.2)then
+                    !    call pow_60(ii,10.0)
+                    !    nnnn=nnnn+1
+                    !    NNN=1
+                    !else
                         call save_N(mm,mmm)
                         exit
-                    endif                   
+                    !endif                   
                 else
                     NNN=NNN+1
                 endif
@@ -924,10 +931,12 @@ module DEPLETION
             do j=1,7
                 read(1,*,iostat=nn)FERROR(j)
                 if(FERROR(j).ne.FERROR_OLD(j))ntmp=0
+                !if(FERROR(j).gt.0.001)ntmp=0
             enddo
             close(1)
             
             if(ntmp.eq.1)exit
+            if(mmm.gt.25)exit
             
             FERROR_OLD=FERROR
             
@@ -991,6 +1000,17 @@ module DEPLETION
 	read(1,*)
 	read(1,*)ntemp
     close(1)
+    
+    open(3,file='com_1_x.dat')
+	open(4,file='com_1_old.dat')
+	do while(.true.)
+		read(3,100,iostat=nn)rd
+		if(nn/=0)exit
+		write(4,*)rd
+    end do
+    
+	close(3)
+	close(4)
     
     open(3,file='com_1_x.dat')
     open(5,file='com_10.inp')
@@ -2198,117 +2218,10 @@ subroutine KEY(FEED)
     !------------提取中子通量密度---------------
     open(1,file='neutron_flux.dat')
     read(1,*)
-    read(1,'(E9.3)') flux
-    close(1)
-    !-----------------------------------------------------
-    !--------------建立中子得失守恒方程--------------------
-    facp=0.0
-    open(1,file='KMT_act.dat')
-    read(1,*)
-    do while(.true.)
-        read(1,*,iostat=nn)nza,fac
-        if(nn/=0)exit
-		if(fac.gt.0.0)then
-		if(nza.eq.902320)then
-			i=1
-			do while(.true.)
-                if(i.gt.429)exit
-                if(NO(i).eq.nza)then
-                    fth=fac/FNO(i)
-                exit                
-                endif
-                i=i+1
-            end do
-		else if(nza.eq.922330)then
-			i=1
-			do while(.true.)
-                if(i.gt.429)exit
-                if(NO(i).eq.nza)then
-                    fu3=fac/FNO(i)
-                exit                
-                endif
-                i=i+1
-            end do
-        else if(nza.eq.932370)then
-			i=1
-			do while(.true.)
-                if(i.gt.429)exit
-                if(NO(i).eq.nza)then
-                    fnp=fac/FNO(i)
-                exit                
-                endif
-                i=i+1
-            end do
-        else if(nza.eq.952410)then
-			i=1
-			do while(.true.)
-                if(i.gt.429)exit
-                if(NO(i).eq.nza)then
-                    fam1=fac/FNO(i)
-                exit                
-                endif
-                i=i+1
-            end do
-        else if(nza.eq.952430)then
-			i=1
-			do while(.true.)
-                if(i.gt.429)exit
-                if(NO(i).eq.nza)then
-                    fam3=fac/FNO(i)
-                exit                
-                endif
-                i=i+1
-            end do
-        else if(nza.eq.962440)then
-			i=1
-			do while(.true.)
-                if(i.gt.429)exit
-                if(NO(i).eq.nza)then
-                    fcm4=fac/FNO(i)
-                exit                
-                endif
-                i=i+1
-            end do
-        else if(nza.eq.962450)then
-			i=1
-			do while(.true.)
-                if(i.gt.429)exit
-                if(NO(i).eq.nza)then
-                    fcm5=fac/FNO(i)
-                exit                
-                endif
-                i=i+1
-            end do
-		else
-			i=1
-			do while(.true.)
-                if(i.gt.429)exit
-                if(NO(i).eq.nza)then
-                    j=1
-					do while(.true.)
-						if(j.gt.429)exit
-						if(N(j).eq.nza)then
-                            if(FNO(i).gt.0.0)then
-							    facp=facp+fac/FNO(i)*FN(j)
-                            endif
-							i=429
-							exit                
-						endif
-						j=j+1
-					end do
-                exit                
-                endif
-                i=i+1
-            end do
-		endif
-		endif
-    enddo
+    read(1,*) flux
     close(1)
     
-!---------------
-    
-!---------------
-    
+        
     open(1,file='tot_cs.dat')
     open(2,file='loss_cs_feed.dat')!!!!!!!!反推添料率方程中核素消失项截面信息
     do while(.true.)
@@ -2326,285 +2239,7 @@ subroutine KEY(FEED)
     close(1)
     close(2)
 
-    
-!!!!!!!!!!!!!!!!!!!!! 要把中子得失守恒方程的系数保存到文件中，matrix_NCEs.dat(neutron conservation equations) !!!!!!!!!!!!!!!!!!!!!!!!
-    open(1,file='matrix_NCEs.dat')
-    write(1,*)"co_th2  co_u3  co_np7  co_am1  "
-    write(1,*)fth,fu3,fnp,fam1
-    write(1,*)"co_am3  co_cm4  co_cm5  " !!!!!!co表示“coefficient”，方程组系数
-    write(1,*)fam3,fcm4,fcm5
-    write(1,*)"feedTh feedU3 feedMA"
-    write(1,*)0.0,0.0,0.0
-    write(1,*)"co_const  "
-    write(1,*)fkeff-facp
-    close(1)
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!!!!!!!!!!!!!!!!!!!! 计算反推添料率方程相关系数 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!---------------------计算各添料率前面系数-------------   
-    feed_Th=-1.0E+16
-    feed_U3=-1.0E+16
-    feed_MA=-1.0E+16
-    open(1,file='Proportion_MA.inp')
-    read(1,*)
-    do while(.true.)
-        read(1,*,iostat=nn)nza,fna,fpro
-        if(nn/=0)exit
-        if(nza.eq.93237)feed_Np=feed_MA*fpro
-        if(nza.eq.95241)feed_Am1=feed_MA*fpro
-        if(nza.eq.95243)feed_Am3=feed_MA*fpro
-        if(nza.eq.96244)feed_Cm4=feed_MA*fpro
-        if(nza.eq.96245)feed_Cm5=feed_MA*fpro
-    enddo
-    close(1)
-!------------------------------------------------------    
-!!!!!!!!!Th232反推添料率方程系数!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!产生率fp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    fp=0.0
-    open(1,file='DECAY_Th.dat')
-    read(1,*)
-    read(1,*)
-    do while(.true.)
-        read(1,*,iostat=nn) nza,fthalf,fprob !!!!!!!!!fthalf为核素半衰期，fprob为核素衰变分支比
-        if(nn/=0)exit
-        i=1
-        do while(.true.)
-            if(i.gt.429)exit
-            if(N(i).eq.nza)then
-                fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
-                exit
-            endif
-            i=i+1
-        end do
-    end do
-    close(1)
-    
-    open(1,file='prod_cs_feed.dat')
-    do while(.true.)
-        read(1,*,iostat=nn)nza,fpcs,mt
-        if(nn/=0)exit
-        if((nza.eq.902310).and.(mt.eq.102))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-        
-        if((nza.eq.902340).and.(mt.eq.17))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-        if((nza.eq.912320).and.(mt.eq.103))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-        if((nza.eq.912330).and.(mt.eq.28))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-        if((nza.eq.922350).and.(mt.eq.107))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-        if((nza.eq.902330).and.(mt.eq.16))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-    end do
-    close(1)
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!Th232消失项系数!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    fcl=0.0 !!!!!!coefficient loss消失项系数!!!!!!!!!
-    open(2,file='DECAY_Th.dat')
-    read(2,*)
-    read(2,*)nza,fthalf,fprob
-    fcl=fcl+log(2.0)/fthalf*fprob*(1.0E+24)
-    close(2)
-    
-    open(2,file='loss_cs_feed.dat')
-    do while(.true.)
-        read(2,*,iostat=nn)nza,flcs
-        if(nn/=0)exit
-        if(nza.eq.902320)then
-            fcl=fcl+flux*flcs
-            exit
-        endif
-    end do
-    close(2)
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!! 将Th232反推添料率方程的各项保存到文件feed_equation_Th.dat!!!!!!!!!!!!!
-    open(1,file='feed_equation_Th.dat') 
-    write(1,*)"th2 u3 np7 am1"
-    write(1,*)fcl,0.0,0.0,0.0
-    write(1,*)"am3 cm4 cm5"
-    write(1,*)0.0,0.0,0.0
-    write(1,*)"feedTh feedU3 feedMA"
-    write(1,*)feed_Th,0,0
-    write(1,*)"const"
-    write(1,*)fp
-    close(1)
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-!!!!!!!!!U233反推添料率方程系数!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!产生率fp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    fp=0.0
-    open(1,file='DECAY_U3.dat')
-    read(1,*)
-    read(1,*)
-    do while(.true.)
-        read(1,*,iostat=nn) nza,fthalf,fprob !!!!!!!!!fthalf为核素半衰期，fprob为核素衰变分支比
-        if(nn/=0)exit
-        i=1
-        do while(.true.)
-            if(i.gt.429)exit
-            if(N(i).eq.nza)then
-                fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
-                exit
-            endif
-            i=i+1
-        end do
-    end do
-    close(1)
-    
-    open(1,file='prod_cs_feed.dat')
-    do while(.true.)
-        read(1,*,iostat=nn)nza,fpcs,mt
-        if(nn/=0)exit
-        if((nza.eq.922320).and.(mt.eq.102))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-        
-        if((nza.eq.922340).and.(mt.eq.16))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-        if((nza.eq.922350).and.(mt.eq.17))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-        if((nza.eq.922360).and.(mt.eq.37))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-        if((nza.eq.942360).and.(mt.eq.107))then
-           i=1
-            do while(.true.)
-                if(i.gt.429)exit
-                if(N(i).eq.nza)then
-                    fp=fp+FN(i)*flux*fpcs
-                    exit
-                endif
-                i=i+1
-            end do 
-        endif
-    end do
-    close(1)
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!U233消失项系数!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    fcl=0.0 !!!!!!coefficient loss消失项系数!!!!!!!!!
-    open(2,file='DECAY_U3.dat')
-    read(2,*)
-    read(2,*)nza,fthalf,fprob
-    fcl=fcl+log(2.0)/fthalf*fprob*(1.0E+24)
-    close(2)
-    
-    open(2,file='loss_cs_feed.dat')
-    do while(.true.)
-        read(2,*,iostat=nn)nza,flcs
-        if(nn/=0)exit
-        if(nza.eq.922330)then
-            fcl=fcl+flux*flcs
-            exit
-        endif
-    end do
-    close(2)
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!! 将U233反推添料率方程的各项保存到文件feed_equation_U3.dat!!!!!!!!!!!!!
-    open(1,file='feed_equation_U3.dat') 
-    write(1,*)"th2 u3 np7 am1"
-    write(1,*)0.0,fcl,0.0,0.0
-    write(1,*)"am3 cm4 cm5"
-    write(1,*)0.0,0.0,0.0
-    write(1,*)"feedTh feedU3 feedMA"
-    write(1,*)0,feed_U3,0
-    write(1,*)"const"
-    write(1,*)fp
-    close(1)
-    
-    
-!-----------------------------------------------------------Pu238 equilibrium burnup equation-----------------------------------------------------
+    !-----------------------------------------------------------Pu238 equilibrium burnup equation-----------------------------------------------------
 !-------------------------------------Pu-238's two main precusors are Np-238 and Cm-242---------------------------------------------------
 !-------------------------------------Np-238 is produced mainly by captruing a neutron by Np-237-----------------------------------------
 !-------------------------------------Cm-242 is 
@@ -2710,7 +2345,7 @@ subroutine KEY(FEED)
 !--------------------------------------------------------------------
 !--------------Am2420产生率----------------------------------
     fp2=0.0
-    open(1,file='DECAY_Np.dat')
+    open(1,file='DECAY_Am20.dat')
     read(1,*)
     read(1,*)
     read(1,*)nza,fthalf,fprob
@@ -3069,6 +2704,413 @@ subroutine KEY(FEED)
     close(1)
 !----------------------------------------------------------------------------------------  
     
+    open(1,file='N_Pu238.dat')
+    read(1,*)
+    read(1,*)fnp71,fam11
+    read(1,*)
+    read(1,*)fconst
+    close(1)
+    
+    
+    !-----------------------------------------------------
+    !--------------建立中子得失守恒方程--------------------
+    facp=0.0
+    fpu8=0.0
+    open(1,file='KMT_act.dat')
+    read(1,*)
+    do while(.true.)
+        read(1,*,iostat=nn)nza,fac
+        if(nn/=0)exit
+		if(fac.gt.0.0)then
+		if(nza.eq.902320)then
+			i=1
+			do while(.true.)
+                if(i.gt.429)exit
+                if(NO(i).eq.nza)then
+                    fth=fac/FNO(i)
+                exit                
+                endif
+                i=i+1
+            end do
+		else if(nza.eq.922330)then
+			i=1
+			do while(.true.)
+                if(i.gt.429)exit
+                if(NO(i).eq.nza)then
+                    fu3=fac/FNO(i)
+                exit                
+                endif
+                i=i+1
+            end do
+        else if(nza.eq.932370)then
+			i=1
+			do while(.true.)
+                if(i.gt.429)exit
+                if(NO(i).eq.nza)then
+                    fnp=fac/FNO(i)
+                exit                
+                endif
+                i=i+1
+            end do
+   !     else if(nza.eq.942380)then
+			!i=1
+			!do while(.true.)
+   !             if(i.gt.429)exit
+   !             if(NO(i).eq.nza)then
+   !                 if(FNO(i).ne.0.0) fpu8=fac/FNO(i)
+   !             exit                
+   !             endif
+   !             i=i+1
+   !         end do
+        else if(nza.eq.952410)then
+			i=1
+			do while(.true.)
+                if(i.gt.429)exit
+                if(NO(i).eq.nza)then
+                    fam1=fac/FNO(i)
+                exit                
+                endif
+                i=i+1
+            end do
+        else if(nza.eq.952430)then
+			i=1
+			do while(.true.)
+                if(i.gt.429)exit
+                if(NO(i).eq.nza)then
+                    fam3=fac/FNO(i)
+                exit                
+                endif
+                i=i+1
+            end do
+        else if(nza.eq.962440)then
+			i=1
+			do while(.true.)
+                if(i.gt.429)exit
+                if(NO(i).eq.nza)then
+                    fcm4=fac/FNO(i)
+                exit                
+                endif
+                i=i+1
+            end do
+        else if(nza.eq.962450)then
+			i=1
+			do while(.true.)
+                if(i.gt.429)exit
+                if(NO(i).eq.nza)then
+                    fcm5=fac/FNO(i)
+                exit                
+                endif
+                i=i+1
+            end do
+		else
+			i=1
+			do while(.true.)
+                if(i.gt.429)exit
+                if(NO(i).eq.nza)then
+                    j=1
+					do while(.true.)
+						if(j.gt.429)exit
+						if(N(j).eq.nza)then
+                            if(FNO(i).gt.0.0)then
+							    facp=facp+fac/FNO(i)*FN(j)
+                            endif
+							i=429
+							exit                
+						endif
+						j=j+1
+					end do
+                exit                
+                endif
+                i=i+1
+            end do
+		endif
+		endif
+    enddo
+    close(1)
+    
+!---------------
+    
+!---------------
+
+    fpu8=0.0
+!!!!!!!!!!!!!!!!!!!!! 要把中子得失守恒方程的系数保存到文件中，matrix_NCEs.dat(neutron conservation equations) !!!!!!!!!!!!!!!!!!!!!!!!
+    open(1,file='matrix_NCEs.dat')
+    write(1,*)"co_th2  co_u3  co_np7  co_am1  "
+    write(1,*)fth,fu3,fnp+fpu8*fnp71,fam1+fpu8*fam11
+    write(1,*)"co_am3  co_cm4  co_cm5  " !!!!!!co表示“coefficient”，方程组系数
+    write(1,*)fam3,fcm4,fcm5
+    write(1,*)"feedTh feedU3 feedMA"
+    write(1,*)0.0,0.0,0.0
+    write(1,*)"co_const  "
+    write(1,*)fkeff-facp!-fpu8*fconst
+    close(1)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!!!!!!!!!!!!! 计算反推添料率方程相关系数 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!---------------------计算各添料率前面系数-------------   
+    feed_Th=-1.0E+16
+    feed_U3=-1.0E+16
+    feed_MA=-1.0E+16
+    open(1,file='Proportion_MA.inp')
+    read(1,*)
+    do while(.true.)
+        read(1,*,iostat=nn)nza,fna,fpro
+        if(nn/=0)exit
+        if(nza.eq.93237)feed_Np=feed_MA*fpro
+        if(nza.eq.95241)feed_Am1=feed_MA*fpro
+        if(nza.eq.95243)feed_Am3=feed_MA*fpro
+        if(nza.eq.96244)feed_Cm4=feed_MA*fpro
+        if(nza.eq.96245)feed_Cm5=feed_MA*fpro
+    enddo
+    close(1)
+!------------------------------------------------------    
+!!!!!!!!!Th232反推添料率方程系数!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!产生率fp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    fp=0.0
+    open(1,file='DECAY_Th.dat')
+    read(1,*)
+    read(1,*)
+    do while(.true.)
+        read(1,*,iostat=nn) nza,fthalf,fprob !!!!!!!!!fthalf为核素半衰期，fprob为核素衰变分支比
+        if(nn/=0)exit
+        i=1
+        do while(.true.)
+            if(i.gt.429)exit
+            if(N(i).eq.nza)then
+                fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
+                exit
+            endif
+            i=i+1
+        end do
+    end do
+    close(1)
+    
+    open(1,file='prod_cs_feed.dat')
+    do while(.true.)
+        read(1,*,iostat=nn)nza,fpcs,mt
+        if(nn/=0)exit
+        if((nza.eq.902310).and.(mt.eq.102))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+        
+        if((nza.eq.902340).and.(mt.eq.17))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+        if((nza.eq.912320).and.(mt.eq.103))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+        if((nza.eq.912330).and.(mt.eq.28))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+        if((nza.eq.922350).and.(mt.eq.107))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+        if((nza.eq.902330).and.(mt.eq.16))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+    end do
+    close(1)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!Th232消失项系数!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    fcl=0.0 !!!!!!coefficient loss消失项系数!!!!!!!!!
+    open(2,file='DECAY_Th.dat')
+    read(2,*)
+    read(2,*)nza,fthalf,fprob
+    fcl=fcl+log(2.0)/fthalf*fprob*(1.0E+24)
+    close(2)
+    
+    open(2,file='loss_cs_feed.dat')
+    do while(.true.)
+        read(2,*,iostat=nn)nza,flcs
+        if(nn/=0)exit
+        if(nza.eq.902320)then
+            fcl=fcl+flux*flcs
+            exit
+        endif
+    end do
+    close(2)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!! 将Th232反推添料率方程的各项保存到文件feed_equation_Th.dat!!!!!!!!!!!!!
+    open(1,file='feed_equation_Th.dat') 
+    write(1,*)"th2 u3 np7 am1"
+    write(1,*)fcl,0.0,0.0,0.0
+    write(1,*)"am3 cm4 cm5"
+    write(1,*)0.0,0.0,0.0
+    write(1,*)"feedTh feedU3 feedMA"
+    write(1,*)feed_Th,0,0
+    write(1,*)"const"
+    write(1,*)fp
+    close(1)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+!!!!!!!!!U233反推添料率方程系数!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!产生率fp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    fp=0.0
+    open(1,file='DECAY_U3.dat')
+    read(1,*)
+    read(1,*)
+    do while(.true.)
+        read(1,*,iostat=nn) nza,fthalf,fprob !!!!!!!!!fthalf为核素半衰期，fprob为核素衰变分支比
+        if(nn/=0)exit
+        i=1
+        do while(.true.)
+            if(i.gt.429)exit
+            if(N(i).eq.nza)then
+                fp=fp+FN(i)*(1.0E+24)*(log(2.0)/fthalf)*fprob
+                exit
+            endif
+            i=i+1
+        end do
+    end do
+    close(1)
+    
+    open(1,file='prod_cs_feed.dat')
+    do while(.true.)
+        read(1,*,iostat=nn)nza,fpcs,mt
+        if(nn/=0)exit
+        if((nza.eq.922320).and.(mt.eq.102))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+        
+        if((nza.eq.922340).and.(mt.eq.16))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+        if((nza.eq.922350).and.(mt.eq.17))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+        if((nza.eq.922360).and.(mt.eq.37))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+        if((nza.eq.942360).and.(mt.eq.107))then
+           i=1
+            do while(.true.)
+                if(i.gt.429)exit
+                if(N(i).eq.nza)then
+                    fp=fp+FN(i)*flux*fpcs
+                    exit
+                endif
+                i=i+1
+            end do 
+        endif
+    end do
+    close(1)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!U233消失项系数!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    fcl=0.0 !!!!!!coefficient loss消失项系数!!!!!!!!!
+    open(2,file='DECAY_U3.dat')
+    read(2,*)
+    read(2,*)nza,fthalf,fprob
+    fcl=fcl+log(2.0)/fthalf*fprob*(1.0E+24)
+    close(2)
+    
+    open(2,file='loss_cs_feed.dat')
+    do while(.true.)
+        read(2,*,iostat=nn)nza,flcs
+        if(nn/=0)exit
+        if(nza.eq.922330)then
+            fcl=fcl+flux*flcs
+            exit
+        endif
+    end do
+    close(2)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!! 将U233反推添料率方程的各项保存到文件feed_equation_U3.dat!!!!!!!!!!!!!
+    open(1,file='feed_equation_U3.dat') 
+    write(1,*)"th2 u3 np7 am1"
+    write(1,*)0.0,fcl,0.0,0.0
+    write(1,*)"am3 cm4 cm5"
+    write(1,*)0.0,0.0,0.0
+    write(1,*)"feedTh feedU3 feedMA"
+    write(1,*)0,feed_U3,0
+    write(1,*)"const"
+    write(1,*)fp
+    close(1)
+    
+    
+
     
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4009,7 +4051,7 @@ end subroutine KEY
 	 
 
         call new_TRITON
-        !call system('E:\scale6.1\cmds\runscale TRITON.inp')
+        call system('E:\scale6.1\cmds\runscale TRITON.inp')
         call read_kmt
         call read_keffd(0)
         call cs_file(0)
@@ -4147,17 +4189,7 @@ end subroutine KEY
             end do
         close(5) 
         close(2)
- 
-    open(1,file='neutron_flux.dat')
-    read(1,*)
-    read(1,*) flux
-    close(1)
-    
-    open(1,file='neutron_flux.dat')
-    write(1,*)"neutron flux:"
-    write(1,'(E9.3)') flux
-    close(1)
-    
+
     open(2,file='TRITON.out')
     open(3,file='tot_cs.dat')!!!!!用于中子得失守恒方程的截面信息：tot-cap、nu-sigf
     !open(6,file='tot_cs_b.dat')
@@ -4166,12 +4198,6 @@ end subroutine KEY
     !open(5,file='NN_cs.dat')!-----用于中子得失守恒方程的(n,2n),(n,3n)反应道
     
     open(4,file='prod_cs_feed.dat')!!!!反推添料率方程必需的截面信息  
-
-    do while(.true.)
-        read(2,100,iostat=nn)rdd
-        if(nn/=0)exit
-        if(rdd(1:13).eq." the reaction")exit
-    end do
     
     do while(.true.)
         read(2,100,iostat=nn)rdd
