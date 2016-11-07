@@ -899,11 +899,11 @@ module DEPLETION
             if(njudge.eq.0)then
                 if(NNN.eq.9)then
                     if(nnnn.eq.1)then
-                        call pow_60(ii,1000.0)
+                        call pow_60(ii,100.0)
                         nnnn=nnnn+1
                         NNN=1
                     elseif(nnnn.eq.2)then
-                        call pow_60(ii,1000.0)
+                        call pow_60(ii,10.0)
                         nnnn=nnnn+1
                         NNN=1
                     else
