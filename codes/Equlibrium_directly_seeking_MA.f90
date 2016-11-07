@@ -899,11 +899,11 @@ module DEPLETION
             if(njudge.eq.0)then
                 if(NNN.eq.9)then
                     if(nnnn.eq.1)then
-                        call pow_60(ii,100.0)
+                        call pow_60(ii,500.0)
                         nnnn=nnnn+1
                         NNN=1
                     elseif(nnnn.eq.2)then
-                        call pow_60(ii,10.0)
+                        call pow_60(ii,100.0)
                         nnnn=nnnn+1
                         NNN=1
                     else
@@ -1514,8 +1514,17 @@ module DEPLETION
     read(2,*)
     j=0
     do while(.true.)
-            read(2,*,iostat=nn)nucly,nza,na,fatoms,fg,fw
+            read(2,*,iostat=nn)nucly,nza,fna,fatoms,fq,fw
             if(nn/=0)exit
+        if((nza.eq.30070).or.(nza.eq.90190).or.(nza.eq.40090))then
+            open(5,file='com_FLiBe.dat')
+            do while(.true.)
+                read(5,*,iostat=mm)nucly,nza1,fna,fatoms,fq,fw
+                if(mm/=0)exit
+                if(nza1.eq.nza)exit
+            end do
+            close(5)
+        endif
             if(j.eq.0)then
                 write(1,*)"74**   ",fw
             else
