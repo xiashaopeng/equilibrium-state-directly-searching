@@ -899,11 +899,11 @@ module DEPLETION
             if(njudge.eq.0)then
                 if(NNN.eq.9)then
                     if(nnnn.eq.1)then
-                        call pow_60(ii,100.0)
+                        call pow_60(ii,1000.0)
                         nnnn=nnnn+1
                         NNN=1
                     elseif(nnnn.eq.2)then
-                        call pow_60(ii,10.0)
+                        call pow_60(ii,1000.0)
                         nnnn=nnnn+1
                         NNN=1
                     else
@@ -4034,7 +4034,7 @@ end subroutine KEY
 	 
 
         call new_TRITON
-        call system('E:\scale6.1\cmds\runscale TRITON.inp')
+        !call system('E:\scale6.1\cmds\runscale TRITON.inp')
         call read_kmt
         call read_keffd(0)
         call cs_file(0)
